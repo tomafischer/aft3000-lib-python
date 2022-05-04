@@ -1,0 +1,1 @@
+docker run --rm --name scope-stability -p 9000:8080 scope-stability:latest
