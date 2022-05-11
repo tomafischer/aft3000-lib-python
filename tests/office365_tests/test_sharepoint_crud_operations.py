@@ -1,34 +1,14 @@
 
-from aft3000_lib.office365.sharepoint.v1.crud_operations import sp_connect_app_principal, sp_get_list_object, sp_getWebsiteTitle, sp_get_list_items, sp_add_item, sp_recycle_item
+from aft3000_lib.office365.sharepoint.v1.crud_operations import sp_connect_app_principal, sp_get_list_object, sp_getWebsiteTitle, sp_get_list_items, sp_add_item, sp_recycle_item, sp_list_items_2_pd, sp_remove_sharepoint_columns
 import pytest
 
 import uuid
-"""
-sharepoint settings
-"""
-_app_principal = {    
-    'client_id': '',
-    'client_secret': '',
-    }
-_site_url = 'https://my.sharepoint.com/teams/test'
 
 
-
-_list_name = "Unittests"
 """
 Arrange
 """
 
-@pytest.fixture
-def app_principal():
-    return _app_principal
-@pytest.fixture
-def site_url():
- return _site_url
-
-@pytest.fixture
-def list_name():
-    return _list_name
 
 @pytest.fixture
 def ctx(app_principal,site_url):
@@ -58,6 +38,21 @@ def test_sp_get_list_items___no_filters(ctx, list_name):
         title = list(items)[0].properties['Title'] 
         assert bool(title) is True
 
+@pytest.mark.sp
+def test_sp_list_items_2_pd(ctx, list_name):
+    items_sp = sp_get_list_items(ctx, list_name) 
+    items_pd = sp_list_items_2_pd(list_items= items_sp)     
+    items_clean = sp_remove_sharepoint_columns(items_pd)
+    assert len(items_pd.columns) == len(items_clean.columns) , "Columns should be the same, due that the header was already removed" 
+
+@pytest.mark.sp
+def test_sp_list_items_2_pd_no_removed(ctx, list_name):
+    items_sp = sp_get_list_items(ctx, list_name) 
+    items_pd = sp_list_items_2_pd(list_items= items_sp, remove_sp_columns= False)     
+    items_clean = sp_remove_sharepoint_columns(items_pd)
+    assert len(items_pd.columns) != len(items_clean.columns) , "Columns should be different" 
+
+
 @pytest.mark.skip
 @pytest.mark.integration
 def test_sp_get_list_items___crud_filters(ctx, list_name):
@@ -84,12 +79,5 @@ def test_sp_get_list_items___crud_filters(ctx, list_name):
 
 
 
-####
-#   Manual tests can be run in interactive console
-####
-#os.chdir('../')
-def manual():
-    _ctx = sp_connect_app_principal(_app_principal, _site_url)
-    items = sp_get_list_items(_ctx, _list_name)
-    for i in items:
-        print(i.properties)
+
+

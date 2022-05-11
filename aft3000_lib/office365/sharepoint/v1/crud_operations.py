@@ -46,26 +46,43 @@ def sp_get_list_items(ctx, list_name: str, filter_query = None, print_progress =
 
 # adding items
 def sp_add_item(ctx, list_name, item_dict, verbose= True):
+    """
+    Adding items to Sharepoint. 
+    """
     list_object = ctx.web.lists.get_by_title(list_name)
     sp_item = list_object.add_item(item_dict).execute_query()
     if verbose:
         print(f"Item created with SharePoint_Id: {sp_item.id}")
     return sp_item
 
-def sp_recycle_item(ctx, item_id, target_list):
+def sp_recycle_item(item_id, target_list):
     #https://github.com/vgrem/Office365-REST-Python-Client/blob/master/examples/sharepoint/listitems/delete_list_item.py
     #target_list = ctx.web.lists.get_by_title(list_name)
     #item_id = items[0].id
     target_list.get_item_by_id(item_id).recycle().execute_query()
 
 
-def sp_list_items_2_pd(list_items):
+def sp_remove_sharepoint_columns(data_pd: pd, verbose= False) -> pd:
+    """
+    Remove all extra columns from Sharepoint. 
+    If columns are already removed we skip those columns
+    """
+    for h in [ "Id", "ID", "FileSystemObjectType","ServerRedirectedEmbedUri", "ServerRedirectedEmbedUrl","ContentTypeId","Modified","Created","AuthorId","EditorId", "OData__UIVersionString","Attachments","GUID", "ComplianceAssetId"]:
+        if h in data_pd.columns:
+            data_pd = data_pd.drop(columns=[h])
+    return data_pd
+
+def sp_list_items_2_pd(list_items, remove_sp_columns = True, verbose= False):
     """"
-   Converting Sharepoint List items to pandas 
+    Converting Sharepoint List items to pandas 
     """
     all= list(list_items)
     all = [i.properties for i in all]
     all_json = json.dumps(all)
     all_pd = pd.read_json(all_json)
 
+    if remove_sp_columns:
+        if verbose:
+            print("Remove Sharepoint Columns")
+        all_pd = sp_remove_sharepoint_columns(data_pd=all_pd)
     return all_pd
