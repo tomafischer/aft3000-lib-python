@@ -16,9 +16,9 @@ def compare_pd():
 
 @pytest.mark.pd
 def test_compare_datasets(original_pd, compare_pd):
-    ret =  pd_compare_datasets(original_pd=original_pd, compare_pd=compare_pd, on=['A','B'], compare_column='C')
-    assert 'C_o' in ret['added'].columns , "check if column names were correctly added"
-    assert 'C_c' in ret['added'].columns
+    ret =  pd_compare_datasets(original_pd=original_pd, compare_pd=compare_pd, on=['A','B'], compare_column='C', suffixes=['_one','_two'])
+    assert 'C_one' in ret['added'].columns , "check if column names were correctly added"
+    assert 'C_two' in ret['added'].columns
     assert len(ret['added']) ==1 
     assert len(ret['del']) == 1
     assert ret['added'].iloc[0,0] == 4
