@@ -38,7 +38,7 @@ pytest --markers
 # run sharepint tests only
 # to be able to run the sharepoint test you have to 
 # - set site_url
-# - set your secret key in sharepoint_crud_operations_test.py
+# - set your secret key in conftest.py
 # - create a test list on sharepoint called "Unittests"
 
 # _app_principal = {    

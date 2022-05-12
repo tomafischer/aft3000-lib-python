@@ -21,4 +21,15 @@ def sp_remove_columns_manul():
     items_clean = sp_remove_sharepoint_columns(items_pd)
     print(items_clean.info())
 
-sp_remove_columns_manul()
+# sp_remove_columns_manul()
+
+###
+#  Pandas tests
+###
+from aft3000_lib.pandas_lib import pd_compare_datasets
+from tests.test_pandas_lib import test_compare_datasets
+from tests.test_pandas_lib import _compare, _original
+original_pd = pd.DataFrame([[1,2,"test"], [2,3,"me"]], columns=['A', 'B', 'C'])
+compare_pd = pd.DataFrame([[1,2,"test2"], [4,3,"me2"]], columns=['A', 'B', 'C'])
+ret = test_compare_datasets(_original, _compare)
+

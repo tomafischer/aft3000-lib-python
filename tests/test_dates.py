@@ -1,6 +1,6 @@
 import pytest 
 from datetime import datetime, timedelta
-from aft3000_lib.dates import date_monday_of_week
+from aft3000_lib.dates_lib import date_monday_of_week
 
 @pytest.mark.parametrize('midweek',[[datetime(2021,10,4),datetime(2021,10,4,0,0,0)],
   [datetime(2021,10,4),datetime(2021,10,4,0,0,0)],
