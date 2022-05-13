@@ -1,3 +1,4 @@
+from xmlrpc.client import Boolean
 from office365.sharepoint.client_context import ClientContext
 from office365.runtime.auth.client_credential import ClientCredential
 
@@ -23,13 +24,13 @@ def sp_print_progress(items_read):
 def sp_get_list_object(ctx, list_name):
     return ctx.web.lists.get_by_title(list_name)
 
-def sp_get_list_items(ctx, list_name: str, filter_query = None, print_progress = sp_print_progress):
+def sp_get_list_items(ctx, list_name: str, filter_query = None, print_progress = sp_print_progress, verbose: Boolean= True):
     list_object = ctx.web.lists.get_by_title(list_name)
 
     #adding paging for longer lists
     items = list_object.items.paged(True)
     ## add progress status
-    if print_progress:
+    if print_progress and verbose:
         items.page_loaded += print_progress
     if filter_query:
         items.filter(filter_query)
@@ -37,7 +38,8 @@ def sp_get_list_items(ctx, list_name: str, filter_query = None, print_progress =
     ctx.load(items)
     ctx.execute_query()
     # getting response
-    print(f"Loaded items count: {len(items)}")
+    if verbose:
+        print(f"Loaded items count: {len(items)}")
     #for item in items:
         # pass
         #print(type(item.properties))
