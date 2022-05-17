@@ -2,6 +2,10 @@ from datetime import datetime, timedelta
 from xmlrpc.client import Boolean
 from pytz import timezone
 
+format_iso_sec = "%Y-%m-%d %H:%M:%S"
+format_iso_ns = "%Y-%m-%d %H:%M:%S.%f"
+
+
 def date_monday_of_week(day_of_week: datetime = datetime.now()):
     """
     Returns Monday midnight of the week
@@ -17,9 +21,9 @@ def format_iso_no_tz(dt: datetime, microseconds= False ) -> str:
   Formats the datetime object into iso format
   """
   if microseconds:
-    return dt.strftime("%Y-%m-%d %H:%M:%S:%f")
+    return dt.strftime(format_iso_ns)
   else:
-    return dt.strftime("%Y-%m-%d %H:%M:%S")
+    return dt.strftime(format_iso_sec)
 
 def dt_fromisoformat(dt_str: str, remove_tz: Boolean = False) -> datetime:
     """

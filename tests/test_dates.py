@@ -23,7 +23,7 @@ def test_format_iso_no_tz():
   dt = datetime(2020,5,4,1,2,1,123456)
 
   # act , assert
-  assert format_iso_no_tz(dt, microseconds=True) == '2020-05-04 01:02:01:123456'
+  assert format_iso_no_tz(dt, microseconds=True) == '2020-05-04 01:02:01.123456'
   assert format_iso_no_tz(dt, ) == '2020-05-04 01:02:01'
 
 @pytest.mark.dates
