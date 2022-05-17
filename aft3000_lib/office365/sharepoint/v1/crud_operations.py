@@ -6,6 +6,11 @@ import json
 import pandas as pd
 
 def sp_connect_app_principal(app_principal: dict, site_url: str) -> ClientContext:
+    """
+    Uses an application Id to authenticate agains Sharepoint online. Works with MFA.
+    For details see:
+    https://code2care.org/sharepoint/how-to-access-sharepoint-online-data-using-postman-rest-graph-api-oauth
+    """
     credentials = ClientCredential(app_principal['client_id'], app_principal['client_secret'])
     ctx = ClientContext(site_url).with_credentials(credentials)
     return ctx
@@ -25,6 +30,10 @@ def sp_get_list_object(ctx, list_name):
     return ctx.web.lists.get_by_title(list_name)
 
 def sp_get_list_items(ctx, list_name: str, filter_query = None, print_progress = sp_print_progress, verbose: Boolean= True):
+    """
+    Retrieve List items from list_name
+    Filter example: fitler_query = "System_Type eq 'Sales' and Deparment eq 'Internet'"
+    """
     list_object = ctx.web.lists.get_by_title(list_name)
 
     #adding paging for longer lists
@@ -57,10 +66,23 @@ def sp_add_item(ctx, list_name, item_dict, verbose= True):
         print(f"Item created with SharePoint_Id: {sp_item.id}")
     return sp_item
 
+def sp_get_target_list(ctx, list_name: str):
+    """
+    Get target_list object. Can be reused for sp_recycle_item
+    """
+    return ctx.web.lists.get_by_title(list_name)
+
 def sp_recycle_item(item_id, target_list):
-    #https://github.com/vgrem/Office365-REST-Python-Client/blob/master/examples/sharepoint/listitems/delete_list_item.py
-    #target_list = ctx.web.lists.get_by_title(list_name)
-    #item_id = items[0].id
+    """
+    Recycles the item on the target_list.
+    Call sp_get_target_list to retrieve the target_list obejct by name
+    
+    For details see:
+    https://github.com/vgrem/Office365-REST-Python-Client/blob/master/examples/sharepoint/listitems/delete_list_item.py
+    
+    Example for getting the iteme id from a sharepont item:
+    item_id = items[0].id
+    """
     target_list.get_item_by_id(item_id).recycle().execute_query()
 
 
